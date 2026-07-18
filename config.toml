@@ -1,0 +1,22 @@
+# Reverse proxy configuration.
+# This file is watched for changes — edit it and save while the proxy is
+# running to see backends added/removed and the algorithm switched live,
+# with no restart.
+
+listen_addr = "127.0.0.1:8080"
+
+# "round_robin" or "least_connections"
+algorithm = "round_robin"
+
+health_check_interval_secs = 3
+health_check_timeout_secs = 1
+health_check_path = "/health"
+
+[[backends]]
+addr = "http://127.0.0.1:9001"
+
+[[backends]]
+addr = "http://127.0.0.1:9002"
+
+[[backends]]
+addr = "http://127.0.0.1:9003"
