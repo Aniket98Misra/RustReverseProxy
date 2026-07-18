@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: clippy, rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Check formatting (informational — tighten to blocking once you've run `cargo fmt` locally)
+        run: cargo fmt --all -- --check
+        continue-on-error: true
+
+      - name: Clippy (informational — tighten to blocking once you've cleared local warnings)
+        run: cargo clippy --all-targets -- -D warnings
+        continue-on-error: true
+
+      - name: Build
+        run: cargo build --all-targets
+
+      - name: Unit tests
+        run: cargo test --lib
+
+      - name: Integration tests
+        run: cargo test --test integration
